@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A47BC8B23C5E7E000654ABF /* YMBase64Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A47BC8A23C5E7E000654ABF /* YMBase64Helper.m */; };
 		7AC760F923C4B90100CC9467 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AC760F823C4B90100CC9467 /* AppDelegate.m */; };
 		7AC760FC23C4B90100CC9467 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AC760FB23C4B90100CC9467 /* SceneDelegate.m */; };
 		7AC760FF23C4B90100CC9467 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AC760FE23C4B90100CC9467 /* ViewController.m */; };
@@ -19,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7A47BC8923C5E7E000654ABF /* YMBase64Helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YMBase64Helper.h; sourceTree = "<group>"; };
+		7A47BC8A23C5E7E000654ABF /* YMBase64Helper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YMBase64Helper.m; sourceTree = "<group>"; };
 		7AC760F423C4B90100CC9467 /* YMEncryptHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YMEncryptHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AC760F723C4B90100CC9467 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7AC760F823C4B90100CC9467 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -57,6 +60,15 @@
 			path = AES;
 			sourceTree = "<group>";
 		};
+		7A47BC8C23C5E7E600654ABF /* Base64 */ = {
+			isa = PBXGroup;
+			children = (
+				7A47BC8923C5E7E000654ABF /* YMBase64Helper.h */,
+				7A47BC8A23C5E7E000654ABF /* YMBase64Helper.m */,
+			);
+			path = Base64;
+			sourceTree = "<group>";
+		};
 		7AC760EB23C4B90100CC9467 = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +90,7 @@
 			children = (
 				7A47BC8423C5DEF000654ABF /* AES */,
 				7AC7611423C4B92C00CC9467 /* RSA */,
+				7A47BC8C23C5E7E600654ABF /* Base64 */,
 				7AC760F723C4B90100CC9467 /* AppDelegate.h */,
 				7AC760F823C4B90100CC9467 /* AppDelegate.m */,
 				7AC760FA23C4B90100CC9467 /* SceneDelegate.h */,
@@ -175,6 +188,7 @@
 				7AC760FF23C4B90100CC9467 /* ViewController.m in Sources */,
 				7AC760F923C4B90100CC9467 /* AppDelegate.m in Sources */,
 				7AC7611223C4B91A00CC9467 /* YMAESHelper.m in Sources */,
+				7A47BC8B23C5E7E000654ABF /* YMBase64Helper.m in Sources */,
 				7AC7610A23C4B90300CC9467 /* main.m in Sources */,
 				7AC7611723C5ACCA00CC9467 /* YMRSAHelper.m in Sources */,
 				7AC760FC23C4B90100CC9467 /* SceneDelegate.m in Sources */,
