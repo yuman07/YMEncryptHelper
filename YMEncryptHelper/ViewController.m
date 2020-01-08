@@ -21,26 +21,26 @@
 
     [self testAES];
     
-//    [self testRSA];
+    [self testRSA];
 }
 
 - (void)testAES
 {
-    NSString *string1 = [YMAESHelper AESWorkWithString:@"你好123"
-                                             operation:YMAESHelperOperationEncrypt
-                                                  mode:YMAESHelperModeCBC
-                                               keySize:YMAESHelperKeySize192
-                                               padding:YMAESHelperPaddingPKCS7
-                                                   key:@"111"
-                                                    iv:@"111"];
+    NSString *string1 = [YMAESHelper AESWithString:@"你好123"
+                                         operation:YMAESHelperOperationEncrypt
+                                              mode:YMAESHelperModeCBC
+                                           keySize:YMAESHelperKeySize192
+                                           padding:YMAESHelperPaddingPKCS7
+                                               key:@"111"
+                                                iv:@"111"];
     
-    NSString *string2 = [YMAESHelper AESWorkWithString:@"o9fmlIDGsH+bAn8zKaf2hw=="
-                                             operation:YMAESHelperOperationDecrypt
-                                                  mode:YMAESHelperModeCBC
-                                               keySize:YMAESHelperKeySize128
-                                               padding:YMAESHelperPaddingPKCS7
-                                                   key:@"111"
-                                                    iv:@"111"];
+    NSString *string2 = [YMAESHelper AESWithString:@"o9fmlIDGsH+bAn8zKaf2hw=="
+                                         operation:YMAESHelperOperationDecrypt
+                                              mode:YMAESHelperModeCBC
+                                           keySize:YMAESHelperKeySize128
+                                           padding:YMAESHelperPaddingPKCS7
+                                               key:@"111"
+                                                iv:@"111"];
     
     NSLog(@"%@", string1);
     NSLog(@"%@", string2);

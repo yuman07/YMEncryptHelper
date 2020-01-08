@@ -32,13 +32,13 @@ typedef NS_ENUM(NSInteger, YMAESHelperPadding) {
 
 /// 对NSString类型进行AES加密/解密。返回值为加解密后使用base64编码的string
 /// 其余参数参看AESWorkWithData:
-+ (NSString *)AESWorkWithString:(NSString *)string
-                      operation:(YMAESHelperOperation)operation
-                           mode:(YMAESHelperMode)mode
-                        keySize:(YMAESHelperKeySize)keySize
-                        padding:(YMAESHelperPadding)padding
-                            key:(NSString *)key
-                             iv:(NSString *)iv;
++ (NSString *)AESWithString:(NSString *)string
+                  operation:(YMAESHelperOperation)operation
+                       mode:(YMAESHelperMode)mode
+                    keySize:(YMAESHelperKeySize)keySize
+                    padding:(YMAESHelperPadding)padding
+                        key:(NSString *)key
+                         iv:(NSString *)iv;
 
 /// 对NSData类型进行AES加密/解密。返回值为加/解密后的data，若失败则返回nil
 /// @param data 欲加密/解密的data
@@ -48,12 +48,12 @@ typedef NS_ENUM(NSInteger, YMAESHelperPadding) {
 /// @param padding 标记AES算法使用的填充模式(目前iOS只提供了PKCS7)
 /// @param key 密钥
 /// @param iv 偏移量
-+ (NSData *)AESWorkWithData:(NSData *)data
-                  operation:(YMAESHelperOperation)operation
-                       mode:(YMAESHelperMode)mode
-                    keySize:(YMAESHelperKeySize)keySize
-                    padding:(YMAESHelperPadding)padding
-                        key:(NSString *)key
-                         iv:(NSString *)iv;
++ (NSData *)AESWithData:(NSData *)data
+              operation:(YMAESHelperOperation)operation
+                   mode:(YMAESHelperMode)mode
+                keySize:(YMAESHelperKeySize)keySize
+                padding:(YMAESHelperPadding)padding
+                    key:(NSString *)key
+                     iv:(NSString *)iv;
 
 @end

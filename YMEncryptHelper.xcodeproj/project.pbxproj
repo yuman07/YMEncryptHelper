@@ -15,6 +15,7 @@
 		7AC7610723C4B90300CC9467 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AC7610523C4B90300CC9467 /* LaunchScreen.storyboard */; };
 		7AC7610A23C4B90300CC9467 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AC7610923C4B90300CC9467 /* main.m */; };
 		7AC7611223C4B91A00CC9467 /* YMAESHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AC7611023C4B91A00CC9467 /* YMAESHelper.m */; };
+		7AC7611723C5ACCA00CC9467 /* YMRSAHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AC7611623C5ACCA00CC9467 /* YMRSAHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,8 @@
 		7AC7610923C4B90300CC9467 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7AC7611023C4B91A00CC9467 /* YMAESHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMAESHelper.m; sourceTree = "<group>"; };
 		7AC7611123C4B91A00CC9467 /* YMAESHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMAESHelper.h; sourceTree = "<group>"; };
+		7AC7611523C5ACCA00CC9467 /* YMRSAHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YMRSAHelper.h; sourceTree = "<group>"; };
+		7AC7611623C5ACCA00CC9467 /* YMRSAHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YMRSAHelper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +96,8 @@
 		7AC7611423C4B92C00CC9467 /* RSA */ = {
 			isa = PBXGroup;
 			children = (
+				7AC7611523C5ACCA00CC9467 /* YMRSAHelper.h */,
+				7AC7611623C5ACCA00CC9467 /* YMRSAHelper.m */,
 			);
 			path = RSA;
 			sourceTree = "<group>";
@@ -171,6 +176,7 @@
 				7AC760F923C4B90100CC9467 /* AppDelegate.m in Sources */,
 				7AC7611223C4B91A00CC9467 /* YMAESHelper.m in Sources */,
 				7AC7610A23C4B90300CC9467 /* main.m in Sources */,
+				7AC7611723C5ACCA00CC9467 /* YMRSAHelper.m in Sources */,
 				7AC760FC23C4B90100CC9467 /* SceneDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

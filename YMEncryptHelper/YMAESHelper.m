@@ -11,13 +11,13 @@
 
 @implementation YMAESHelper
 
-+ (NSString *)AESWorkWithString:(NSString *)string
-                      operation:(YMAESHelperOperation)operation
-                           mode:(YMAESHelperMode)mode
-                        keySize:(YMAESHelperKeySize)keySize
-                        padding:(YMAESHelperPadding)padding
-                            key:(NSString *)key
-                             iv:(NSString *)iv
++ (NSString *)AESWithString:(NSString *)string
+                  operation:(YMAESHelperOperation)operation
+                       mode:(YMAESHelperMode)mode
+                    keySize:(YMAESHelperKeySize)keySize
+                    padding:(YMAESHelperPadding)padding
+                        key:(NSString *)key
+                         iv:(NSString *)iv
 {
     if (!string || ![string isKindOfClass:[NSString class]] || string.length == 0) {
         return nil;
@@ -30,24 +30,24 @@
         inputData = [[NSData alloc] initWithBase64EncodedString:string options:NSDataBase64DecodingIgnoreUnknownCharacters];
     }
     
-    NSData *outputData = [self AESWorkWithData:inputData
-                                     operation:operation
-                                          mode:mode
-                                       keySize:keySize
-                                       padding:padding
-                                           key:key
-                                            iv:iv];
+    NSData *outputData = [self AESWithData:inputData
+                                 operation:operation
+                                      mode:mode
+                                   keySize:keySize
+                                   padding:padding
+                                       key:key
+                                        iv:iv];
     
     return [outputData base64EncodedStringWithOptions:0];
 }
 
-+ (NSData *)AESWorkWithData:(NSData *)data
-                  operation:(YMAESHelperOperation)operation
-                       mode:(YMAESHelperMode)mode
-                    keySize:(YMAESHelperKeySize)keySize
-                    padding:(YMAESHelperPadding)padding
-                        key:(NSString *)key
-                         iv:(NSString *)iv
++ (NSData *)AESWithData:(NSData *)data
+              operation:(YMAESHelperOperation)operation
+                   mode:(YMAESHelperMode)mode
+                keySize:(YMAESHelperKeySize)keySize
+                padding:(YMAESHelperPadding)padding
+                    key:(NSString *)key
+                     iv:(NSString *)iv
 {
     if (!data || ![data isKindOfClass:[NSData class]] || data.length == 0) {
         return nil;
