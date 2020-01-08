@@ -59,6 +59,9 @@
     }
     
     [self stripKey:key keyType:keyType];
+    if (key.length == 0) {
+        return nil;
+    }
     
     NSData *keyData = [[NSData alloc] initWithBase64EncodedString:key options:NSDataBase64DecodingIgnoreUnknownCharacters];
     if (keyType == YMRSAHelperKeyTypePublic) {
@@ -88,9 +91,10 @@
     size_t srclen = (size_t)data.length;
     size_t block_size = SecKeyGetBlockSize(keyRef) * sizeof(uint8_t);
     uint8_t *outbuf = malloc(block_size);
-    size_t src_block_size = block_size - (operation == YMRSAHelperOperationEncrypt ? 11 : 0);
-    if (!outbuf) {
+    size_t src_block_size = block_size - ((operation == YMRSAHelperOperationEncrypt) ? 11 : 0);
+    if (!outbuf || src_block_size <= 0) {
         CFRelease(keyRef);
+        if (outbuf) { free(outbuf); }
         return nil;
     }
     
