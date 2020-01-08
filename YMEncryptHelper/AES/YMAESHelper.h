@@ -1,6 +1,6 @@
 //
 //  YMAESHelper.h
-//  TestThird
+//  YMEncryptHelper
 //
 //  Created by yuman on 2020/1/7.
 //  Copyright © 2020 yuman. All rights reserved.
@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger, YMAESHelperPadding) {
 @interface YMAESHelper : NSObject
 
 /// 对NSString类型进行AES加密/解密。返回值为加解密后使用base64编码的string
-/// 其余参数参看AESWithData:
+/// 其余参数参参照AESWithData:
 + (NSString *)AESWithString:(NSString *)string
                   operation:(YMAESHelperOperation)operation
                        mode:(YMAESHelperMode)mode
