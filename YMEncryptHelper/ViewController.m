@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "YMAESHelper.h"
+#import "YMRSAHelper.h"
 
 @interface ViewController ()
 
@@ -19,7 +20,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    [self testAES];
+ //   [self testAES];
     
     [self testRSA];
 }
@@ -48,7 +49,18 @@
 
 - (void)testRSA
 {
+    NSString *string1 = [YMRSAHelper RSAWithString:@"你好123"
+                                         operation:YMRSAHelperOperationEncrypt
+                                               key:@""
+                                           keyType:YMRSAHelperKeyTypePrivate];
     
+    NSString *string2 = [YMRSAHelper RSAWithString:@""
+                                         operation:YMRSAHelperOperationDecrypt
+                                               key:@""
+                                           keyType:YMRSAHelperKeyTypePublic];
+    
+    NSLog(@"%@", string1);
+    NSLog(@"%@", string2);
 }
 
 

@@ -20,7 +20,19 @@ typedef NS_ENUM(NSInteger, YMRSAHelperKeyType) {
 
 @interface YMRSAHelper : NSObject
 
-- (NSData *)RSAWithData:(NSData *)data
+/// 对NSString类型进行RSA加密/解密。返回值为加解密后使用base64编码的string
+/// 其余参数参看RSAWithData:
++ (NSString *)RSAWithString:(NSString *)string
+                  operation:(YMRSAHelperOperation)operation
+                        key:(NSString *)key
+                    keyType:(YMRSAHelperKeyType)keyType;
+
+/// 对NSData类型进行RSA加密/解密。返回值为加解密后的data，若失败则返回nil
+/// @param data 欲加密/解密的data
+/// @param operation 标记此次操作是加密还是解密
+/// @param key 密钥
+/// @param keyType 标记此密钥是公钥还是私钥
++ (NSData *)RSAWithData:(NSData *)data
               operation:(YMRSAHelperOperation)operation
                     key:(NSString *)key
                 keyType:(YMRSAHelperKeyType)keyType;
