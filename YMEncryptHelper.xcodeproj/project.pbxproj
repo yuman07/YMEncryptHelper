@@ -48,6 +48,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7A47BC8423C5DEF000654ABF /* AES */ = {
+			isa = PBXGroup;
+			children = (
+				7AC7611123C4B91A00CC9467 /* YMAESHelper.h */,
+				7AC7611023C4B91A00CC9467 /* YMAESHelper.m */,
+			);
+			path = AES;
+			sourceTree = "<group>";
+		};
 		7AC760EB23C4B90100CC9467 = {
 			isa = PBXGroup;
 			children = (
@@ -67,7 +76,7 @@
 		7AC760F623C4B90100CC9467 /* YMEncryptHelper */ = {
 			isa = PBXGroup;
 			children = (
-				7AC7611323C4B91F00CC9467 /* AES */,
+				7A47BC8423C5DEF000654ABF /* AES */,
 				7AC7611423C4B92C00CC9467 /* RSA */,
 				7AC760F723C4B90100CC9467 /* AppDelegate.h */,
 				7AC760F823C4B90100CC9467 /* AppDelegate.m */,
@@ -82,15 +91,6 @@
 				7AC7610923C4B90300CC9467 /* main.m */,
 			);
 			path = YMEncryptHelper;
-			sourceTree = "<group>";
-		};
-		7AC7611323C4B91F00CC9467 /* AES */ = {
-			isa = PBXGroup;
-			children = (
-				7AC7611123C4B91A00CC9467 /* YMAESHelper.h */,
-				7AC7611023C4B91A00CC9467 /* YMAESHelper.m */,
-			);
-			name = AES;
 			sourceTree = "<group>";
 		};
 		7AC7611423C4B92C00CC9467 /* RSA */ = {
