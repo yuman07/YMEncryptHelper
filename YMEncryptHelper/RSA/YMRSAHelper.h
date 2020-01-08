@@ -18,6 +18,7 @@ typedef NS_ENUM(NSInteger, YMRSAHelperKeyType) {
     YMRSAHelperKeyTypePrivate,
 };
 
+/// 需iOS >= 10
 @interface YMRSAHelper : NSObject
 
 /// 对NSString类型进行RSA加密/解密。返回值为加解密后使用base64编码的string

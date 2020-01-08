@@ -74,20 +74,23 @@
     options[(__bridge id)kSecAttrKeyType] = (__bridge id)kSecAttrKeyTypeRSA;
     options[(__bridge id)kSecAttrKeyClass] = (__bridge id)((keyType == YMRSAHelperKeyTypePublic) ? (kSecAttrKeyClassPublic) : (kSecAttrKeyClassPrivate));
     options[(__bridge id)kSecAttrKeySizeInBits] = @2048;
+    options[(__bridge id)kSecReturnPersistentRef] = @YES;
     NSError *error = nil;
     CFErrorRef errRef = (__bridge CFErrorRef)error;
     
     SecKeyRef keyRef = SecKeyCreateWithData((__bridge CFDataRef)keyData, (__bridge CFDictionaryRef)options, &errRef);
     if (errRef || !keyRef) {
+        if (keyRef) { CFRelease(keyRef); }
         return nil;
     }
     
     const uint8_t *srcbuf = (const uint8_t *)[data bytes];
     size_t srclen = (size_t)data.length;
     size_t block_size = SecKeyGetBlockSize(keyRef) * sizeof(uint8_t);
-    void * outbuf = malloc(block_size);
-    size_t src_block_size = block_size - 11;
+    uint8_t *outbuf = malloc(block_size);
+    size_t src_block_size = block_size - (operation == YMRSAHelperOperationEncrypt ? 11 : 0);
     if (!outbuf) {
+        CFRelease(keyRef);
         return nil;
     }
     
@@ -101,27 +104,53 @@
         size_t outlen = block_size;
         OSStatus status = noErr;
         
-        if (keyType == YMRSAHelperKeyTypePrivate) {
-            status = SecKeyRawSign(keyRef,
-                                   kSecPaddingPKCS1,
+        if (operation == YMRSAHelperOperationEncrypt) {
+            if (keyType == YMRSAHelperKeyTypePublic) {
+                status = SecKeyEncrypt(keyRef,
+                                       kSecPaddingPKCS1,
+                                       srcbuf + idx,
+                                       data_len,
+                                       outbuf,
+                                       &outlen);
+            } else {
+                status = SecKeyRawSign(keyRef,
+                                       kSecPaddingPKCS1,
+                                       srcbuf + idx,
+                                       data_len,
+                                       outbuf,
+                                       &outlen);
+            }
+            if (status != noErr) {
+                ret = nil;
+                break;
+            } else {
+                [ret appendBytes:outbuf length:outlen];
+            }
+        } else {
+            status = SecKeyDecrypt(keyRef,
+                                   kSecPaddingNone,
                                    srcbuf + idx,
                                    data_len,
                                    outbuf,
                                    &outlen);
-        } else {
-            status = SecKeyEncrypt(keyRef,
-                                   kSecPaddingPKCS1,
-                                   srcbuf + idx,
-                                   data_len,
-                                   outbuf,
-                                   &outlen);
-        }
-        
-        if (status == noErr) {
-            [ret appendBytes:outbuf length:outlen];
-        } else {
-            ret = nil;
-            break;
+            if (status != noErr) {
+                ret = nil;
+                break;
+            } else {
+                NSInteger idxFirstZero = -1;
+                NSInteger idxNextZero = (NSInteger)outlen;
+                for (NSInteger i = 0; i < outlen; i++) {
+                    if (outbuf[i] == 0) {
+                        if (idxFirstZero < 0) {
+                            idxFirstZero = i;
+                        } else {
+                            idxNextZero = i;
+                            break;
+                        }
+                    }
+                }
+                [ret appendBytes:&outbuf[idxFirstZero+1] length:idxNextZero-idxFirstZero-1];
+            }
         }
     }
     
