@@ -11,59 +11,61 @@
 
 @implementation YMAESHelper
 
-+ (NSString *)AESWorkWithType:(YMAESHelperType)type
-                    algorithm:(YMAESHelperAlgorithm)algorithm
-                       string:(NSString *)string
-                         mode:(YMAESHelperMode)mode
-                      padding:(YMAESHelperPadding)padding
-                          key:(NSString *)key
-                           iv:(NSString *)iv
++ (NSString *)AESWorkWithString:(NSString *)string
+                      operation:(YMAESHelperOperation)operation
+                           mode:(YMAESHelperMode)mode
+                        keySize:(YMAESHelperKeySize)keySize
+                        padding:(YMAESHelperPadding)padding
+                            key:(NSString *)key
+                             iv:(NSString *)iv
 {
     if (!string || ![string isKindOfClass:[NSString class]] || string.length == 0) {
         return nil;
     }
     
     NSData *inputData = nil;
-    if (type == YMAESHelperTypeEncrypt) {
+    if (operation == YMAESHelperOperationEncrypt) {
         inputData = [string dataUsingEncoding:NSUTF8StringEncoding];
-    } else if (type == YMAESHelperTypeDecrypt) {
-        inputData = [[NSData alloc] initWithBase64EncodedString:string options:0];
+    } else if (operation == YMAESHelperOperationDecrypt) {
+        inputData = [[NSData alloc] initWithBase64EncodedString:string options:NSDataBase64DecodingIgnoreUnknownCharacters];
     }
-    NSData *data = [self AESWorkWithType:type
-                               algorithm:algorithm
-                                    data:inputData
-                                    mode:mode
-                                 padding:YMAESHelperPaddingPKCS7
-                                     key:key
-                                      iv:iv];
-    return [data base64EncodedStringWithOptions:0];
+    
+    NSData *outputData = [self AESWorkWithData:inputData
+                                     operation:operation
+                                          mode:mode
+                                       keySize:keySize
+                                       padding:padding
+                                           key:key
+                                            iv:iv];
+    
+    return [outputData base64EncodedStringWithOptions:0];
 }
 
-+ (NSData *)AESWorkWithType:(YMAESHelperType)type
-                  algorithm:(YMAESHelperAlgorithm)algorithm
-                       data:(NSData *)data
++ (NSData *)AESWorkWithData:(NSData *)data
+                  operation:(YMAESHelperOperation)operation
                        mode:(YMAESHelperMode)mode
+                    keySize:(YMAESHelperKeySize)keySize
                     padding:(YMAESHelperPadding)padding
                         key:(NSString *)key
                          iv:(NSString *)iv
 {
-    if (type != YMAESHelperTypeEncrypt &&
-        type != YMAESHelperTypeDecrypt) {
-        return nil;
-    }
-    
-    if (algorithm != YMAESHelperAlgorithmAES128 &&
-        algorithm != YMAESHelperAlgorithmAES192 &&
-        algorithm != YMAESHelperAlgorithmAES256) {
-        return nil;
-    }
-    
     if (!data || ![data isKindOfClass:[NSData class]] || data.length == 0) {
         return nil;
     }
     
-    if (mode != YMAESHelperModeCBC &&
-        mode != YMAESHelperModeECB) {
+    if (operation != YMAESHelperOperationEncrypt &&
+        operation != YMAESHelperOperationDecrypt) {
+        return nil;
+    }
+    
+    if (mode != YMAESHelperModeECB &&
+        mode != YMAESHelperModeCBC) {
+        return nil;
+    }
+    
+    if (keySize != YMAESHelperKeySize128 &&
+        keySize != YMAESHelperKeySize192 &&
+        keySize != YMAESHelperKeySize256) {
         return nil;
     }
     
@@ -80,7 +82,7 @@
         return nil;
     }
     
-    CCOperation op = (type == YMAESHelperTypeEncrypt) ? kCCEncrypt : kCCDecrypt;
+    CCOperation op = (operation == YMAESHelperOperationEncrypt) ? kCCEncrypt : kCCDecrypt;
     CCAlgorithm alg = kCCAlgorithmAES;
     CCOptions options = 0;
     if (mode == YMAESHelperModeECB) {
@@ -90,46 +92,46 @@
         options |= kCCOptionPKCS7Padding;
     }
     
-    size_t keySize = 0;
-    size_t blockSize = kCCBlockSizeAES128;
-    if (algorithm == YMAESHelperAlgorithmAES128) {
-        keySize = kCCKeySizeAES128;
-    } else if (algorithm == YMAESHelperAlgorithmAES192) {
-        keySize = kCCKeySizeAES192;
+    size_t keyLength = 0;
+    size_t blockLength = kCCBlockSizeAES128;
+    if (keySize == YMAESHelperKeySize128) {
+        keyLength = kCCKeySizeAES128;
+    } else if (keySize == YMAESHelperKeySize192) {
+        keyLength = kCCKeySizeAES192;
     } else {
-        keySize = kCCKeySizeAES256;
+        keyLength = kCCKeySizeAES256;
     }
     
-    char keyPtr[keySize + 1];
+    char keyPtr[keyLength + 1];
     memset(keyPtr, 0, sizeof(keyPtr));
-    memcpy(keyPtr, [key UTF8String], MIN(keySize, strlen([key UTF8String])));
+    memcpy(keyPtr, [key UTF8String], MIN(keyLength, strlen([key UTF8String])));
     
-    char ivPtr[blockSize + 1];
+    char ivPtr[blockLength + 1];
     memset(ivPtr, 0, sizeof(ivPtr));
-    if (mode != YMAESHelperModeECB && iv) {
-        memcpy(ivPtr, [iv UTF8String], MIN(blockSize, strlen([iv UTF8String])));
+    if (mode != YMAESHelperModeECB) {
+        memcpy(ivPtr, [iv UTF8String], MIN(blockLength, strlen([iv UTF8String])));
     }
     
-    size_t bufferSize = data.length + blockSize;
+    size_t bufferSize = data.length + blockLength;
     size_t bufferLength = 0;
     void * buffer = malloc(bufferSize);
     if (!buffer) {
         return nil;
     }
     
-    CCCryptorStatus cryptStatus = CCCrypt(op,
-                                          alg,
-                                          options,
-                                          keyPtr,
-                                          keySize,
-                                          ivPtr,
-                                          data.bytes,
-                                          data.length,
-                                          buffer,
-                                          bufferSize,
-                                          &bufferLength);
+    CCCryptorStatus status = CCCrypt(op,
+                                     alg,
+                                     options,
+                                     keyPtr,
+                                     keyLength,
+                                     ivPtr,
+                                     data.bytes,
+                                     data.length,
+                                     buffer,
+                                     bufferSize,
+                                     &bufferLength);
     
-    if (cryptStatus == kCCSuccess) {
+    if (status == kCCSuccess) {
         return [NSData dataWithBytesNoCopy:buffer length:bufferLength];
     }
     
