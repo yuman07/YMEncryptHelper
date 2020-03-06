@@ -11,36 +11,6 @@
 
 @implementation YMAESHelper
 
-+ (NSString *)AESWithString:(NSString *)string
-                  operation:(YMAESHelperOperation)operation
-                       mode:(YMAESHelperMode)mode
-                    keySize:(YMAESHelperKeySize)keySize
-                    padding:(YMAESHelperPadding)padding
-                        key:(NSString *)key
-                         iv:(NSString *)iv
-{
-    if (!string || ![string isKindOfClass:[NSString class]] || string.length == 0) {
-        return nil;
-    }
-    
-    NSData *inputData = nil;
-    if (operation == YMAESHelperOperationEncrypt) {
-        inputData = [string dataUsingEncoding:NSUTF8StringEncoding];
-    } else if (operation == YMAESHelperOperationDecrypt) {
-        inputData = [[NSData alloc] initWithBase64EncodedString:string options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    }
-    
-    NSData *outputData = [self AESWithData:inputData
-                                 operation:operation
-                                      mode:mode
-                                   keySize:keySize
-                                   padding:padding
-                                       key:key
-                                        iv:iv];
-    
-    return [outputData base64EncodedStringWithOptions:0];
-}
-
 + (NSData *)AESWithData:(NSData *)data
               operation:(YMAESHelperOperation)operation
                    mode:(YMAESHelperMode)mode

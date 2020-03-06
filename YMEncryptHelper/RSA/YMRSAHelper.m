@@ -11,30 +11,6 @@
 
 @implementation YMRSAHelper
 
-+ (NSString *)RSAWithString:(NSString *)string
-                  operation:(YMRSAHelperOperation)operation
-                        key:(NSString *)key
-                    keyType:(YMRSAHelperKeyType)keyType
-{
-    if (!string || ![string isKindOfClass:[NSString class]] || string.length == 0) {
-        return nil;
-    }
-    
-    NSData *inputData = nil;
-    if (operation == YMRSAHelperOperationEncrypt) {
-        inputData = [string dataUsingEncoding:NSUTF8StringEncoding];
-    } else if (operation == YMRSAHelperOperationDecrypt) {
-        inputData = [[NSData alloc] initWithBase64EncodedString:string options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    }
-    
-    NSData *outputData = [self RSAWithData:inputData
-                                 operation:operation
-                                       key:key
-                                   keyType:keyType];
-    
-    return [outputData base64EncodedStringWithOptions:0];
-}
-
 + (NSData *)RSAWithData:(NSData *)data
               operation:(YMRSAHelperOperation)operation
                     key:(NSString *)key

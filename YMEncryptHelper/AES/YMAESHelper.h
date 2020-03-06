@@ -30,16 +30,6 @@ typedef NS_ENUM(NSInteger, YMAESHelperPadding) {
 
 @interface YMAESHelper : NSObject
 
-/// 对NSString类型进行AES加密/解密。返回值为加解密后使用base64编码的string
-/// 其余参数参参照AESWithData:
-+ (NSString *)AESWithString:(NSString *)string
-                  operation:(YMAESHelperOperation)operation
-                       mode:(YMAESHelperMode)mode
-                    keySize:(YMAESHelperKeySize)keySize
-                    padding:(YMAESHelperPadding)padding
-                        key:(NSString *)key
-                         iv:(NSString *)iv;
-
 /// 对NSData类型进行AES加密/解密。返回值为加解密后的data，若失败则返回nil
 /// @param data 欲加密/解密的data
 /// @param operation 标记此次操作是加密还是解密
