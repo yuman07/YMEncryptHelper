@@ -29,7 +29,10 @@
     }
     
     if (mode != YMAESHelperModeECB &&
-        mode != YMAESHelperModeCBC) {
+        mode != YMAESHelperModeCBC &&
+        mode != YMAESHelperModeCFB &&
+        mode != YMAESHelperModeCTR &&
+        mode != YMAESHelperModeOFB) {
         return nil;
     }
     
@@ -39,7 +42,8 @@
         return nil;
     }
     
-    if (padding != YMAESHelperPaddingPKCS7) {
+    if (padding != YMAESHelperPaddingNo &&
+        padding != YMAESHelperPaddingPKCS7) {
         return nil;
     }
     
@@ -52,61 +56,109 @@
         return nil;
     }
     
+    CCCryptorRef cryptorRef;
     CCOperation op = (operation == YMAESHelperOperationEncrypt) ? kCCEncrypt : kCCDecrypt;
     CCAlgorithm alg = kCCAlgorithmAES;
-    CCOptions options = 0;
-    if (mode == YMAESHelperModeECB) {
-        options |= kCCOptionECBMode;
-    }
-    if (padding == YMAESHelperPaddingPKCS7) {
-        options |= kCCOptionPKCS7Padding;
+    CCMode ccmode = 0;
+    size_t cckeySize = 0;
+    CCPadding ccpadding = 0;
+    
+    switch (mode) {
+        case YMAESHelperModeECB:
+            ccmode = kCCModeECB;
+            break;
+        case YMAESHelperModeCBC:
+            ccmode = kCCModeCBC;
+            break;
+        case YMAESHelperModeCFB:
+            ccmode = kCCModeCFB;
+            break;
+        case YMAESHelperModeCTR:
+            ccmode = kCCModeCTR;
+            break;
+        case YMAESHelperModeOFB:
+            ccmode = kCCModeOFB;
+            break;
     }
     
-    size_t keyLength = 0;
-    size_t blockLength = kCCBlockSizeAES128;
-    if (keySize == YMAESHelperKeySize128) {
-        keyLength = kCCKeySizeAES128;
-    } else if (keySize == YMAESHelperKeySize192) {
-        keyLength = kCCKeySizeAES192;
-    } else {
-        keyLength = kCCKeySizeAES256;
+    switch (keySize) {
+        case YMAESHelperKeySize128:
+            cckeySize = kCCKeySizeAES128;
+            break;
+        case YMAESHelperKeySize192:
+            cckeySize = kCCKeySizeAES192;
+            break;
+        case YMAESHelperKeySize256:
+            cckeySize = kCCKeySizeAES256;
+            break;
     }
     
-    char keyPtr[keyLength + 1];
+    switch (padding) {
+        case YMAESHelperPaddingNo:
+            ccpadding = ccNoPadding;
+            break;
+        case YMAESHelperPaddingPKCS7:
+            ccpadding = ccPKCS7Padding;
+            break;
+    }
+    
+    char keyPtr[cckeySize + 1];
     memset(keyPtr, 0, sizeof(keyPtr));
-    memcpy(keyPtr, [key UTF8String], MIN(keyLength, strlen([key UTF8String])));
+    memcpy(keyPtr, [key UTF8String], MIN(cckeySize, strlen([key UTF8String])));
     
-    char ivPtr[blockLength + 1];
+    char ivPtr[cckeySize + 1];
     memset(ivPtr, 0, sizeof(ivPtr));
     if (mode != YMAESHelperModeECB) {
-        memcpy(ivPtr, [iv UTF8String], MIN(blockLength, strlen([iv UTF8String])));
+        memcpy(ivPtr, [iv UTF8String], MIN(cckeySize, strlen([iv UTF8String])));
     }
     
-    size_t bufferSize = data.length + blockLength;
-    size_t bufferLength = 0;
-    void * buffer = malloc(bufferSize);
-    if (!buffer) {
+    CCCryptorStatus status = CCCryptorCreateWithMode(op,
+                                                     ccmode,
+                                                     alg,
+                                                     ccpadding,
+                                                     ivPtr,
+                                                     keyPtr,
+                                                     cckeySize,
+                                                     NULL,
+                                                     0,
+                                                     0,
+                                                     0,
+                                                     &cryptorRef);
+    
+    if (status != kCCSuccess) {
+        CCCryptorRelease(cryptorRef);
         return nil;
     }
     
-    CCCryptorStatus status = CCCrypt(op,
-                                     alg,
-                                     options,
-                                     keyPtr,
-                                     keyLength,
-                                     ivPtr,
-                                     data.bytes,
-                                     data.length,
-                                     buffer,
-                                     bufferSize,
-                                     &bufferLength);
-    
-    if (status == kCCSuccess) {
-        return [NSData dataWithBytesNoCopy:buffer length:bufferLength];
+    size_t bufsize = CCCryptorGetOutputLength(cryptorRef, (size_t)[data length], true);
+    size_t bufused = 0;
+    size_t bytesTotal = 0;
+    void * buf = malloc(bufsize);
+    if (!buf) {
+        CCCryptorRelease(cryptorRef);
+        return nil;
     }
     
-    free(buffer);
-    return nil;
+    status = CCCryptorUpdate(cryptorRef, [data bytes], (size_t)[data length], buf, bufsize, &bufused);
+    if (status != kCCSuccess) {
+        free(buf);
+        CCCryptorRelease(cryptorRef);
+        return nil;
+    }
+    bytesTotal += bufused;
+    
+    status = CCCryptorFinal(cryptorRef, buf + bufused, bufsize - bufused, &bufused);
+    if (status != kCCSuccess) {
+        free(buf);
+        CCCryptorRelease(cryptorRef);
+        return nil;
+    }
+    bytesTotal += bufused;
+    
+    NSData *result = [NSData dataWithBytesNoCopy:buf length:bytesTotal];
+    CCCryptorRelease(cryptorRef);
+    
+    return result;
 }
 
 @end

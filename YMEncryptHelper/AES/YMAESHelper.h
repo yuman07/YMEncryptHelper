@@ -16,6 +16,9 @@ typedef NS_ENUM(NSInteger, YMAESHelperOperation) {
 typedef NS_ENUM(NSInteger, YMAESHelperMode) {
     YMAESHelperModeECB,
     YMAESHelperModeCBC,
+    YMAESHelperModeCFB,
+    YMAESHelperModeCTR,
+    YMAESHelperModeOFB,
 };
 
 typedef NS_ENUM(NSInteger, YMAESHelperKeySize) {
@@ -25,6 +28,7 @@ typedef NS_ENUM(NSInteger, YMAESHelperKeySize) {
 };
 
 typedef NS_ENUM(NSInteger, YMAESHelperPadding) {
+    YMAESHelperPaddingNo,
     YMAESHelperPaddingPKCS7,
 };
 
@@ -34,10 +38,10 @@ typedef NS_ENUM(NSInteger, YMAESHelperPadding) {
 /// @param data 欲加密/解密的data
 /// @param operation 标记此次操作是加密还是解密
 /// @param mode 标记AES算法的模式
-/// @param keySize 标记AES算法使用的keySize(bits)
-/// @param padding 标记AES算法使用的填充模式(目前iOS只提供了PKCS7)
+/// @param keySize 标记AES算法使用的密钥长度
+/// @param padding 标记AES算法使用的填充模式
 /// @param key 密钥
-/// @param iv 偏移量
+/// @param iv 初始向量(ECB模式不需要)
 + (NSData *)AESWithData:(NSData *)data
               operation:(YMAESHelperOperation)operation
                    mode:(YMAESHelperMode)mode
