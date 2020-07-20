@@ -43,7 +43,11 @@
     }
     
     if (padding != YMAESHelperPaddingNo &&
-        padding != YMAESHelperPaddingPKCS7) {
+        padding != YMAESHelperPaddingZero &&
+        padding != YMAESHelperPaddingPKCS5 &&
+        padding != YMAESHelperPaddingPKCS7 &&
+        padding != YMAESHelperPaddingANSIX923 &&
+        padding != YMAESHelperPaddingISO10126) {
         return nil;
     }
     
@@ -61,7 +65,6 @@
     CCAlgorithm alg = kCCAlgorithmAES;
     CCMode ccmode = 0;
     size_t cckeySize = 0;
-    CCPadding ccpadding = 0;
     
     switch (mode) {
         case YMAESHelperModeECB:
@@ -93,13 +96,8 @@
             break;
     }
     
-    switch (padding) {
-        case YMAESHelperPaddingNo:
-            ccpadding = ccNoPadding;
-            break;
-        case YMAESHelperPaddingPKCS7:
-            ccpadding = ccPKCS7Padding;
-            break;
+    if (operation == YMAESHelperOperationEncrypt) {
+        data = [self addPaddingWithData:data padding:padding];
     }
     
     char keyPtr[cckeySize + 1];
@@ -115,7 +113,7 @@
     CCCryptorStatus status = CCCryptorCreateWithMode(op,
                                                      ccmode,
                                                      alg,
-                                                     ccpadding,
+                                                     ccNoPadding,
                                                      ivPtr,
                                                      keyPtr,
                                                      cckeySize,
@@ -158,7 +156,81 @@
     NSData *result = [NSData dataWithBytesNoCopy:buf length:bytesTotal];
     CCCryptorRelease(cryptorRef);
     
+    if (operation == YMAESHelperOperationDecrypt) {
+        result = [self removePaddingWithData:result padding:padding];
+    }
+    
     return result;
+}
+
++ (NSData *)addPaddingWithData:(NSData *)data padding:(YMAESHelperPadding)padding
+{
+    NSMutableData *result = [data mutableCopy];
+    NSUInteger pad = 0;
+    NSUInteger lengthNeedAdd = 16 - data.length % 16;
+    
+    switch (padding) {
+        case YMAESHelperPaddingNo: {
+            return data;
+        }
+        case YMAESHelperPaddingZero: {
+            for (NSUInteger i = 0; i < lengthNeedAdd; i++) {
+                [result appendBytes:&pad length:1];
+            }
+            return [result copy];
+        }
+        case YMAESHelperPaddingPKCS5:
+        case YMAESHelperPaddingPKCS7: {
+            for (NSUInteger i = 0; i < lengthNeedAdd; i++) {
+                [result appendBytes:&lengthNeedAdd length:1];
+            }
+            return [result copy];
+        }
+        case YMAESHelperPaddingANSIX923: {
+            for (NSUInteger i = 0; i < lengthNeedAdd - 1; i++) {
+                [result appendBytes:&pad length:1];
+            }
+            [result appendBytes:&lengthNeedAdd length:1];
+            return [result copy];
+            
+        }
+        case YMAESHelperPaddingISO10126: {
+            for (NSUInteger i = 0; i < lengthNeedAdd - 1; i++) {
+                pad = arc4random() % 256;
+                [result appendBytes:&pad length:1];
+            }
+            [result appendBytes:&lengthNeedAdd length:1];
+            return [result copy];
+        }
+    }
+}
+
++ (NSData *)removePaddingWithData:(NSData *)data padding:(YMAESHelperPadding)padding
+{
+    Byte *bytes = (Byte *)data.bytes;
+    NSUInteger count = 0;
+    
+    switch (padding) {
+        case YMAESHelperPaddingNo: {
+            return data;
+        }
+        case YMAESHelperPaddingZero: {
+            for (NSInteger i = data.length - 1; i >= 0; i--) {
+                if (bytes[i] != 0) {
+                    count = data.length - 1 - i;
+                    break;
+                }
+            }
+            return [data subdataWithRange:NSMakeRange(0, data.length - count)];
+        }
+        case YMAESHelperPaddingPKCS5:
+        case YMAESHelperPaddingPKCS7:
+        case YMAESHelperPaddingANSIX923:
+        case YMAESHelperPaddingISO10126: {
+            count = bytes[data.length - 1];
+            return [data subdataWithRange:NSMakeRange(0, data.length - count)];
+        }
+    }
 }
 
 @end

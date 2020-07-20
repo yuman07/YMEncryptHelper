@@ -29,7 +29,11 @@ typedef NS_ENUM(NSInteger, YMAESHelperKeySize) {
 
 typedef NS_ENUM(NSInteger, YMAESHelperPadding) {
     YMAESHelperPaddingNo,
+    YMAESHelperPaddingZero,
+    YMAESHelperPaddingPKCS5,
     YMAESHelperPaddingPKCS7,
+    YMAESHelperPaddingANSIX923,
+    YMAESHelperPaddingISO10126,
 };
 
 @interface YMAESHelper : NSObject
