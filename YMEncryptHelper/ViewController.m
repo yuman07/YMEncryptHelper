@@ -29,22 +29,22 @@
 
 - (void)testAES
 {
-    NSString *key = @"1234567890123456";
-    NSString *iv = @"1234567890123456";
+    NSString *key = @"111";
+    NSString *iv = @"222";
     
     NSData *data1 = [YMAESHelper AESWithData:[@"你好123" dataUsingEncoding:NSUTF8StringEncoding]
                                    operation:YMAESHelperOperationEncrypt
-                                        mode:YMAESHelperModeCBC
-                                     keySize:YMAESHelperKeySize192
-                                     padding:YMAESHelperPaddingPKCS7
+                                        mode:YMAESHelperModeOFB
+                                     keySize:YMAESHelperKeySize128
+                                     padding:YMAESHelperPaddingANSIX923
                                          key:key
                                           iv:iv];
     
     NSData *data2 = [YMAESHelper AESWithData:data1
                                    operation:YMAESHelperOperationDecrypt
-                                        mode:YMAESHelperModeCBC
-                                     keySize:YMAESHelperKeySize192
-                                     padding:YMAESHelperPaddingPKCS7
+                                        mode:YMAESHelperModeOFB
+                                     keySize:YMAESHelperKeySize128
+                                     padding:YMAESHelperPaddingANSIX923
                                          key:key
                                           iv:iv];
     
